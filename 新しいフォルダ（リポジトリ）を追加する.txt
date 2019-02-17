@@ -1,0 +1,14 @@
+Gitに新しいフォルダ（リポジトリ）を追加したい時
+
+
+Githab Desktop左上のCurrent Repositoryからadd
+↓
+Create New Repository
+↓
+この時点ではotherとしてリポジトリ（フォルダ）が作られているから
+GitHub.com内のリポジトリではなくOtherに作られている
+↓
+PublishしてGitHubにあげる
+↓
+GitHub.com内のリポジトリとして追加され、Otherからなくなる
+Other最後のフォルダだった場合はOther自体がなくなる
