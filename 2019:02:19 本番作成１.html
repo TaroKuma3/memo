@@ -1,0 +1,44 @@
+ほんちゃん作った記録
+
+2019/02/19
+１：ターミナルで、とりあえずデスクトップに本番mokuを作成
+★ターボリンク、アクションケーブル、コーヒーは除外
+	
+rails new moku --skip-action-cable --skip-coffee --skip-turbolinks
+
+２：VSCoodでコントローラ作ろうとしたらエラー。
+★そういえばちゃんとイエーしてるか確認するためにrails sしなきゃだった。
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+Error loading the 'sqlite3' Active Record adapter. Missing a gem it depends on? can't activate sqlite3 (~> 1.3.6), already activated sqlite3-1.4.0. Make sure all dependencies are added to Gemfile. (LoadError)
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
+３：調べたらこんなんあった。バージョンを指定して欲しいみたい。
+https://qiita.com/ginger893/items/acf143e310e2026e6cee
+
+４：実行してbundle install
+
+５：rails sでイエーしてるのを確認
+
+６：コントローラ作成
+rails g controller mypage index show
+
+７：routesでとりあえずlocal3000がmypage/indexになるように
+★rails sで表示チェックOK
+
+８：aplication.jsに加筆
+//= require jquery3
+//= require popper
+//= require bootstrap-sprockets
+
+９：ブラケッツから中身をまんまコピー
+
+１０：起動
+couldn't find file 'jquery3' with type 'application/javascript'とエラー
+gem書いてないみたい。
+
+gem 'bootstrap', '~> 4.1.1'
+gem 'jquery-rails'
+
+１１：bundle installで動いた！
+
+１２：ここで一旦git作って、GitHubにもpush
