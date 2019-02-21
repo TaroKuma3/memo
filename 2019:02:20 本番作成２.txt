@@ -1,0 +1,17 @@
+2019/02/20
+
+１：ロゴ表示のため、画像をapp/assets/imagesへ格納
+
+２：読み込みは以下
+img src="/assets/moku_logo.jpg"
+
+参考：
+http://voiviov.net/2018/06/22/%E3%80%90ruby-on-rails%E3%81%AEview%E7%94%BB%E5%83%8F%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%951%E3%80%91img%E3%81%BE%E3%81%9F%E3%81%AFimage_tag%E3%81%A7%E7%94%BB%E5%83%8F%E3%82%92%E8%A1%A8%E7%A4%BA/
+
+
+３：フォントを変えたくなったけれど一旦保留。
+
+４：mokus/new.html.erbの部分を２つに分けてboodstrapあてる。
+　　まずはmoku開始前
+
+５：ここまで

@@ -1,0 +1,9 @@
+2019/02/21
+
+１：mokus/newのmoku開始前をブラケッツから本番mokus/new.html.erbへコピー
+
+２：moku開始後のhtml+bootstrapの雛形作成
+
+３：時計がセンタリングできない
+
+４：一旦保存
