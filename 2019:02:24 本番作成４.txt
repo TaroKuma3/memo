@@ -1,0 +1,17 @@
+2019/02/24
+
+１：mokus/new.html.erbのmoku開始後と開始前をがっちゃんこしたかった。
+でもmodelがないから検証できない、エラーが出ることはわかってる。
+そこで、形はもうできてるからmodelなどを書いちゃうことに。
+
+２：なにはともあれuserだというわけでdeviseを入れたい。
+deviseをいれる手順でルート設定が必要なのでとりあえずtopcontollerと追従するviewのindex/aboutを作成
+
+３：deviseいれる。今回はdevise投入と同時にuserモデルを作成するからプロトタイプと手順が異なる。
+以下が参考になる。sign up時名前の登録追加もこれでできる。
+
+https://qiita.com/cigalecigales/items/f4274088f20832252374
+
+４：日本語化
+little_mokuのコードと以下でできた。
+https://qiita.com/shizuma/items/a52fd0ef5b60d61fa330
