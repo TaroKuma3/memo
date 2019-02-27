@@ -1,0 +1,13 @@
+2019/02/25
+
+１：日本時間へ
+config/initializeにtime_formats.rbを作成してフォーマット指定
+config/locales/application.rbにtime_zone指定
+
+２：modelをあらかた作る
+・book_markをbool_markとtypoするミス。
+・drop_tableとrails destroy model bool_markによりテーブルとモデルを一旦削除（リネームで良かったがうっかり削除）
+・worksテーブルはboolean開始前のものだったので、うっかりcomment_publicをintegerで作ってしまった。
+migrationファイルを作って型を変更。
+
+３：active_moku_typesがnullとのこと。明日はここから

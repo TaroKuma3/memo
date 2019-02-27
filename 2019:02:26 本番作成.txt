@@ -1,0 +1,20 @@
+2019/02/26
+
+１：mokusコントローラの中身追加でエラーが変わった
+２：ルーティング書いてなかったので書いてエラー解除
+３：collection_selectとbootstrapがうまく当たらない
+optionの書き方があるようだ。
+
+参考：http://www2.trip-mania.jp/papers?tag=Bootstrap#paper25
+
+これをみながら適当にいいってたら表示は↓でなんとかなった
+<div class="form-group m-3" name="moku_type" id="selectMokuType">
+                  <%# <select class="form-control form-control-lg" name="moku_type" id="selectMokuType"> %>
+                    <%#= form.collection_select :moku_type, @user.active_moku_types, :id, :name, selected: @user.moku_types %>
+                    <%= form.collection_select :moku_type, @user.active_moku_types, :id, :name, {}, {:class => "form-control form-control-lg"}%>
+                  </select>
+                  </div>
+                  
+あとはデータが飛ぶかどうか
+
+画面に変化はないけれど、ブラウザバックしようとするとアラートが立つので、部分的に稼働している模様。
