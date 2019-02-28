@@ -1,0 +1,11 @@
+2019/02/28
+１：acts-as-taggable-on導入
+
+参考：https://qiita.com/guri3/items/c667ce2bfbb5baca4b5a
+
+これとプロトタイプのコードですんなりおｋ
+
+２：faq周りのリンクを設定
+
+４：book_mark_controllerとmoku_typ_contorllerの追加
+viewも追加
