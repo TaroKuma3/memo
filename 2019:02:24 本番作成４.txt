@@ -9,6 +9,7 @@ deviseをいれる手順でルート設定が必要なのでとりあえずtopco
 
 ３：deviseいれる。今回はdevise投入と同時にuserモデルを作成するからプロトタイプと手順が異なる。
 以下が参考になる。sign up時名前の登録追加もこれでできる。
+ただし、nameカラムをDBへ追加する必要があるので忘れずに。
 
 https://qiita.com/cigalecigales/items/f4274088f20832252374
 
