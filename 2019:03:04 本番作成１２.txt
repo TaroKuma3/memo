@@ -1,0 +1,22 @@
+2019/03/04
+
+１：workでエラー。見慣れないエラーだけれど、もしかしあらactive storage導入してないからかも。
+ということで導入。
+参考：https://qiita.com/hmmrjn/items/7cc5e5348755c517458a
+
+２：関係なかった。controllerにlittle_mokuをコピペした時に、class名も部分までコピってしまっていたのが原因。
+プロトタイプ: work_controller
+本番:works_controller
+★本番ではｓをつけていた！
+
+３：workの確認をするために、mokus/indexが必要なのでここを調整。
+絞り込みのcollection_selectもうまく設定できた
+
+４：mokus/indexにテーブル設置
+
+５：mokis/indeからwork/newへ飛ぶ時、workとworksの違いでいろいろエラーが多発したが全て解決
+
+６：works/newのレイアウトを作成
+常々探していたスマホサイズの時だけ改行、うまくいくやり方が書いてあるサイトを発見。
+
+参考：https://tech.speee.jp/entry/2018/05/10/113200

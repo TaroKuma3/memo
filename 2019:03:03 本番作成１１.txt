@@ -10,6 +10,8 @@ http://zvub.hateblo.jp/entry/20150203/1422946649
 
 ３：form系がうまくわからず、たまたま見つけたgemのbootstrap_formをlittle_mokuでテスト導入。すばらしいので本番にも導入。
 
+参考：https://github.com/bootstrap-ruby/bootstrap_form
+
 ４：mokus/new.html.erbでmokuタグ選ぶところにラベルが出てしまったけれど、以下にすれば大丈夫だった。
 途中にある{}はオプションを各部分だという話があったのを思い出してすぐ解決できた。
 ({}のことはhttps://pg-happy.jp/bootstrap-form_for-labelside.htmlが参考になっていた)
