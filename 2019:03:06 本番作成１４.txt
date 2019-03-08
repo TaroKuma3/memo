@@ -1,0 +1,8 @@
+2019/03/06
+１：work/newの動作を確認するがエラー。
+「NoMethodError (undefined method `relation_delegate_class' for Moku:Module):」
+とのこと。
+以下を見ると、どうもmokuというのが衝突しているっぽい。
+アプリがmokuで、モデルもmokuだと衝突エラーだったので現在はdo_mokuにしている。この辺のことだろうか。
+
+参考：https://keruuweb.com/rails-relation_class_for-undefined-method-relation_delegate_class-for-samplemodule-nomethoderror-%E3%81%8C%E8%A7%A3%E6%B1%BA%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84%E3%81%A8%E3%81%8D/

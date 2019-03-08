@@ -20,3 +20,8 @@
 常々探していたスマホサイズの時だけ改行、うまくいくやり方が書いてあるサイトを発見。
 
 参考：https://tech.speee.jp/entry/2018/05/10/113200
+
+７：bodyへのcssがうまく当たらず（多分bootstrapとかで優先順位がある関係）、!important;がつけると発見。
+
+参考：http://www.htmq.com/csskihon/007.shtml
+「!important を付けると最優先になる」

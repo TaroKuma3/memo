@@ -1,0 +1,40 @@
+2019/03/07
+１：昨日のエラーの続き
+stackoverflowを見ても、やはり名前が衝突しているっぽい記述。
+参考：https://stackoverflow.com/questions/32570689/rails-4-undefined-method-relation-delegate-class-for-modelclass
+
+
+各モデルの紐付けがbelongs_to :mokuになっている部分があった。workでもそうだったのでまずはそこを修正。
+エラーが変わった！
+「バリデーションに失敗しました: Do mokuを入力してください, Images attachmentsは不正な値です, Titleを入力してください」とのこと。
+controller確認すると、tittleをコメントにしてしまっていたので、コメントを外してクリア。
+
+次が「ActiveModel::MissingAttributeError (can't write unknown attribute `do_moku_id`):」と。
+確かにdo_moku_idなんてパラメータは存在しない。
+どこでそれを指定してる？
+２日間ともここで詰まってるわけにいかないので一旦ここは保留。
+
+２：MJN実装
+・mypage/index.html.erbと、mypage.jsと、config/initialize/assets.rbへそれぞれ書き込み。とりあえずどうさOK
+
+３：カレンダー実装
+参考：https://github.com/excid3/simple_calendar
+
+４：レスポンシブに対応したカレンダー
+月間の方が見やすい。だけどスマホサイズでカレンダーがばーんと出ると、見づらい。
+特に１日に何回かmokuやってるとだいぶしんどい。
+
+ひとまずmd以上で月間カレンダー、未満で週間カレンダーにしてみた。
+
+参考１（サイズによる表示・非表示）：https://www.junk-works.science/display-control-bootstrap4/
+
+参考２（simple_calendar 週間表示）：https://github.com/excid3/simple_calendar
+
+参考３：（simple_calendarで週表示＋イベント組み込み）：https://qiita.com/arekore0/items/099c728b5b7efaf631a5
+
+５：記録が多くなるとmoku_typeの表示では何れにせよ見づらい。
+当初の予定通り、タグごとに色分けしてカレンダーに色丸を出すのがいいけれど、手がかかりそうなのでいずれ。
+今回は、その日にmokuっていた場合、mokuマークを出し、そこをクリックすることで、その日のmokuを一覧で出すページへジャンプする様にしたい。
+現在moku一覧があり、そこではmoku_typeでしぼりこみができる。そのページを使った方がいいんだが…。
+すぐにできるのは新しいページを作って
+「○月○日のmoku」みたいに表示する。
