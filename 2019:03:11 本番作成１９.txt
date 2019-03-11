@@ -1,0 +1,11 @@
+2019/03/11
+１：moku_type続き check_deleteのレイアウト
+
+２：mokus/show.html.のレイアウト
+・@worksがあればeach、なければ「ないよ」と書くところ、「if @works」としか書いていなかったので正しく動いていなかったが、「if @works.present?」で措定通り動いてくれた。
+これはmypage/indexのitemやintroduceがあるかどうかで表示メッセージをコントロールするときの応用。
+
+参考：https://techracho.bpsinc.jp/baba/2011_11_26/4724
+
+showのレイアウトが結構難しい。箱の大きさが違うものが並ぶ。
+rowの入れ子に挑戦、とりあえずうまくいったけれど微妙なレイアウト。

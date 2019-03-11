@@ -1,0 +1,13 @@
+2019/03/10
+
+１：moku_type/index.html.erbを調整
+
+２：moku_type/new.html.erbを調整
+
+３：moku_type/show.html.erbを調整
+
+４：moku_type/edit.html.erbを調整
+
+５：moku_type/check_delete.html.erbを調整
+
+６：h1をcssで設定（忘れてた）
