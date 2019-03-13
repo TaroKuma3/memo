@@ -1,0 +1,48 @@
+2019/03/12
+１：works/new.html.erbでのエラー潰しに挑戦。だめだった。
+＜本番＞
+ POST   /users/:user_id/works(.:format)                             works#create
+ POST   /users/:user_id/mokus/:moku_id/works(.:format)  works#create
+ <プロトタイプ>
+ POST   /users/:user_id/mokus/:moku_id/work(.:format)     work#create
+ 
+ ２：とりあえず諦めてbook_marks/index.html.erbのビューを作成
+ ・タブを作成
+ 参考：https://qiita.com/tonkotsuboy_com/items/15a914f073c8f9bb1344
+ ・worksが仕事しないのでDBに直接データーを書き込んでテスト。
+ ・プロトタイプのコードだと、以下の条件で想定していない動作をしていることがわかった。
+①自分の成果物をブクマしている。
+② 他のユーザーの成果物をブクマしていない。
+
+想定していない動き： SOME ONEにも自分のブクマした成果物が表示される。
+
+そこで、最初の if work.user_id == current_user.idでelseは使わず一旦endして
+改めてifを用意し、unless work.user_id == current_user.idで制御してみることに。
+最初はそれでもダメだった。調べてもよくわからず１行ずつコメント化して確認していき、とりあえずは想定通りに。（別におかしな点はなかった。キャッシュの問題？よくわからず）
+
+３：works/index.htmlの調整
+
+４：works/show.htmlとedit.html.erbの調整
+フォーマットを決めるため、edit.html.erbも作成。
+updateすると、やはりDo Mokuを入力して！とバリデーションエラー
+そういえばいれてなかったmini-magickを入れて確認してみるが特に視点なし
+
+５：works/check_delete.html.erbを作成
+
+６：mokus/check_delete.html.erbをわすれていたのでこれも作成
+
+７：ブクマ.index.html.erbにテーブルも設置
+
+８：フラッシュの調整を忘れていたので調整
+
+参考１：フォルダ/書類/try2(フラッシュの基本の書き方とクローズアイコン)
+参考２：https://cccabinet.jpn.org/bootstrap4/components/alerts（アラートの書き方）
+参考３：スクリーンショット 2018-12-26 16.12.44（progate/フラッシュ有無でbootstrapのアラート帯の表示非表示を制限する）
+参考４：https://remonote.jp/rails-flash-settimeout（自動で消える）
+
+
+８：mypageの自己紹介などはスマホサイズ時にアコーディオンにしたかった。
+とりあえずアコーディオンはできた。
+以下は明日やる。
+要改善１：マウスオーバーは問題なし。クリックすると影が残ったままになる。
+要改善２：d-inline d-md-noneを使ってみたけれど、自己紹介もろとも消えてしまう。他にうまいやり方があるか、もしくはカレンダーの様にするか（その場合はコードが多いのでパーシャルにしようかな）

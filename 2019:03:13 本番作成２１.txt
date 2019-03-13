@@ -1,0 +1,139 @@
+2019/03/13
+
+１：昨日のつづき　アコーディオンの謎
+bootstrapを参照したけれど、コードは問題なさそうなのにどうしてもうまく行かず。
+試しにbootstrapのコードを丸コピしてそのまま貼り付けて動作を見たけれど、それでも同じ様に選択されたままになる。
+
+私のRails上の設定が変。とりあえずここは細かい話なのであとで。
+参考：https://getbootstrap.com/docs/4.3/components/collapse/#accordion-example
+
+２：もう一度worksのエラーに挑戦。
+
+【works_controller createアクション　４３行目付近】
+プロトタイプ
+@work.moku = DoMoku.find(params[:moku_id])
+本番
+@work.moku = DoMoku.fimd(@do_moku.id)
+
+【１】
+同アクション内で@do_moku = DoMoku.find(params[:moku_id])をしていたため、paramsではなく変数を利用していた。（同じこと）
+
+【２】
+しかし念の為プロトタイプ通りに直したところ、バリデーションエラーは消えたが別のエラーが。
+「undefined method `moku=' for #<Work:0x00007fb902a52798> Did you mean? moku_id=」
+
+【３】
+@work.moku = ...だったので@work.do_moku...にしたところ、
+「can't write unknown attribute `do_moku_id`」
+
+do_moku_idというカラムはないといっている。もちろん作ってないので当然のエラー。
+@work.moku = DoMoku.fimd(@do_moku.id)は、プロトタイプの時に、ストロングパラメータにしたのにどうしてもuser_idとmoku_idを拾ってくれないから付け足していた部分。
+
+試しに@work.moku を、@work.do_mokuと書いてみる。
+
+【４】
+すると「バリデーションに失敗しました: Do mokuを入力してください, Userを入力してください, Mokuを入力してください, Userを入力してください」とエラー。
+
+【５】
+user_idとmoku_idをparamsで対応してくれないため書いていた２行をコメントアウトにしてみる。（ストロングパラメータでのみデーターを受け取ってみようとした）
+すると上記と同じエラーメッセージ。
+
+【６】
+ストロングパラメータではなく手書きで受け取りにしてみる
+「バリデーションに失敗しました: Do mokuを入力してください, Images attachmentsは不正な値です」
+
+【７】
+ストロングパラメータ＋save!から！を抜いて確認してみると、
+renderされ「Do mokuを入力してください　Mokuを入力してください」とメッセージ。
+
+【８】
+バリデーションのmoku_id presence:trueをコメント
+それでもMokuを入力してと。
+
+【９】
+うっかりしていたが、この２行はuser_idとmoku_idを受け取れないので代入してデータを渡そうとしている。
+なので以下の様に修正。
+しかし、依然として「バリデーションに失敗しました: Do mokuを入力してください」
+def create
+	@work = Work.new(work_params)
+	@work.moku_id = @do_moku.id
+	@work.user = current_user
+	if @work.save!
+		flash[:notice] = "登録しました！"
+		redirect_to(user_work_index_path(@user))
+    else
+    	render "new"
+    end
+end
+
+【１０】
+work.rbのバリデーションは以下の通り。
+--------------------------------------------------------------------------
+validates :moku_id, presence: true
+validates :user_id, presence: true
+validates :title, presence: true
+validates :comment_public, inclusion: { in: [true, false] }
+validates :pickup_public, inclusion: { in: [true, false] }
+--------------------------------------------------------------------------
+do_mokuというカラムは存在しないので当然バリデはかけてない。
+do_moku絡みでといえばmoku_idがあるが、ここをコメントアウトしてもエラーメッセージは変わらない。
+
+【１１】
+schemaは以下の通り。
+--------------------------------------------------------------------------
+create_table "works", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "moku_id"
+    t.string "title"
+    t.text "comment"
+    t.boolean "comment_public", default: false, null: false
+    t.boolean "pickup_public", default: false, null: false
+    t.boolean "deleted", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+end
+--------------------------------------------------------------------------
+ここでも当然DoMokuに当たるものはないし、moku_idすらバリデーションしてない。
+
+【１２】
+エラー画面の下部に出るパラメータは以下の通り。
+--------------------------------------------------------------------------
+Parameters:
+
+{"utf8"=>"✓",
+ "authenticity_token"=>"QisYFdAwGh3O1cPhu8FMz6QUEXEbLQ6xTmSzzRg/jPr0rNAocrQuMsgHqin7xFvjxcBNFwfqqba3yPv2T3UAJQ==",
+ "work"=>{"title"=>"たいとる", "comment"=>"", "comment_public"=>"false", "pickup_public"=>"true"},
+ "commit"=>"登録する",
+ "user_id"=>"2",
+ "moku_id"=>"68"}
+ --------------------------------------------------------------------------
+をみると、必要なものは受け取れている様に見える。
+
+【１３】
+Do Mokuがどこからきたのかわからない。
+もともとmoku.rbだったものを、本番アプリの名前をmokuにしてしまったから衝突してしまい、致し方なくdo_mokuというモデル名にした経緯がある。
+なので、DoMokuという「モデル」は存在はする。
+でも「カラム」は存在しない。
+念の為schemaでdo_moku,DoMokuを検索したが、カラムの該当はなかった。
+
+【１４】
+worksテーブルを作った時のマイグレーションファイルを確認してみた。
+型を間違えて作ったので、作成、変更の２つのファイルがあったが、この中にはdo_mokuというカラムは存在しない。
+
+【１５】
+念の為gitの過去ログも確認、2/25にテーブルを作ったが特におかしな点はなさそう。
+
+今日はもう諦める。
+
+
+３：faq/showのレイアウトを作成
+忘れてたけれどHTMLでスペースを操作するやり方２
+参考：https://programming-study.com/technology/html-space/
+
+４：faq/new.html.erb
+フォームのサイズ調整
+参考：https://qiita.com/dawn_628/items/60a3dfd6581305970f0f
+
+５：mokus/newの３つの箱（moku_type, 開始ボタン. MJNについて）の高さ不揃いを揃えた。
+縮めた時中身がはみ出てしまうので、col-md-4をcol-lg-4に変更
+はみ出なくなったけれどMJNが悪目立ちするのでまた後日調整する。
