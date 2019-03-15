@@ -1,0 +1,116 @@
+2019/03/15
+１：カレンダーの扱いを調整
+【１】
+mokuタグではなく、その日のmokuの数を表示する様にしたので、そのリンクからその日のmoku一覧が出るページへジャンプしたい。
+
+【２】
+paramsで日付を受け取りたい。どうすればいい？
+ただcreated_atを使ってもダメ。時間も入っている。
+コントローラのアクションで書く絞り込みは…。
+
+
+@moku_days = DoMoku.where(created_at:       ")
+
+
+２：アコーディオンを一旦取り消し
+（カレンダーいじってたら閉じられなくなったため）
+
+３：works/newのエラー再挑戦
+①
+work.rbのバリデーション全部コメントにしても発生するので、アクション内のsaveをsave(validate: false)にしてためしたら登録できた。
+
+work.rbじゃないならどこがバリデーション引っ掛けているんだ？
+
+②
+rails cでvalid?を試してみた
+参考１：https://railsguides.jp/active_record_validations.html#%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E6%A6%82%E8%A6%81-errors
+
+参考２：https://ruby-rails.hatenadiary.com/entry/20140810/1407623400
+--------------------------------------------------------------------------------------------
+irb(main):001:0> work = Work.new
+=> #<Work id: nil, user_id: nil, moku_id: nil, title: nil, comment: nil, comment_public: false, pickup_public: false, deleted: false, created_at: nil, updated_at: nil>
+
+irb(main):002:0> work.id = 6
+=> 6
+
+irb(main):005:0> work.user_id = 2
+=> 2
+
+irb(main):006:0> work.moku_id = 110
+=> 110
+
+irb(main):007:0> work.title = "rails c"
+=> "rails c"
+
+irb(main):008:0> work.comment_public = 1
+=> 1
+
+irb(main):009:0> work.pickup_public = 1
+=> 1
+
+irb(main):010:0> deleted = 0
+=> 0
+
+irb(main):015:0> created_at = "2019-03-15 14:51:12 +0900"
+=> "2019-03-15 14:51:12 +0900"
+
+irb(main):016:0> updated_at = "2019-03-15 14:51:12 +0900"
+=> "2019-03-15 14:51:12 +0900"
+
+irb(main):017:0> work.save!
+
+   (0.1ms)  begin transaction
+  User Load (0.2ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ? LIMIT ?  [["id", 2], ["LIMIT", 1]]
+   (0.1ms)  rollback transaction
+Traceback (most recent call last):
+        1: from (irb):17
+        
+ActiveRecord::RecordInvalid (バリデーションに失敗しました: Do mokuを入力してください)
+
+irb(main):018:0> work.valid?
+=> false
+
+irb(main):019:0> work.errors.messages
+=> {:do_moku=>["を入力してください"]}
+
+irb(main):020:0> work.errors.full_messages
+=> ["Do mokuを入力してください"]
+
+irb(main):022:0> work.errors.details
+=> {:do_moku=>[{:error=>:blank}]}
+--------------------------------------------------------------------------------------------
+
+:do_moku???そんなのどこにも書いてある？
+
+③
+試しにそのままコンソールでdo_moku = 110とdo_mokumのプライマリキーをいれたら、代入はできたけどsaveの時同じエラーで弾かれた。
+
+④
+「Rail5からbelongs_toのデフォルトが関連先の値を検査するようになった」を発見。
+参考：https://qiita.com/junara/items/ca6f65d2f2a27f185f0e
+
+あまり関係ない様にも思うけれどworkのbelongs_toを確認。
+  belongs_to :do_moku
+  belongs_to :user
+  
+  do_mokuあるといえばある
+ 記事に従ってoptional: trueを追加
+ 
+ 解決した！！
+ 
+ でもこれはいったい？？
+ 
+ ⑤
+ 論から言うと、belongs_toの外部キーのnilを許可するというものです。という記述を発見
+ 参考：https://blog.ryskit.com/entry/2018/01/27/195442
+ 
+ つまり、do_mokuにidがない…！？
+ いや普通にありますけど…？
+ 
+ とりあえずこの部分は後日レクチャーを受けよう。
+ 
+ ４：worksの動作を確認
+ 画像添付・ 画像閲覧・画像 削除もOK
+ workのデーター削除そのものもOK
+ 
+ 
