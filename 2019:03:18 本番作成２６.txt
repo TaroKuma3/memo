@@ -1,0 +1,9 @@
+2019/03/18
+１：top画像をレスポンシブへ
+参考：https://cccabinet.jpn.org/bootstrap4/content/images
+
+２：ログイン画面レイアウト作成
+
+３：サインアップ画面レイアウト作成
+
+４：aboutのレイアウトを作成
