@@ -1,0 +1,39 @@
+2019/03/21
+１：サインアップ時、まずは利用規約を読ませ、同意するをクリックしたらサインアップ画面へ飛ぶことにしたが、それだと同意しなくてもURL叩けばいいのでまずいことに気がつく。
+
+チェックボックスを用意し、それにチェックがない場合のアクセス禁止的なものが必要。
+
+①
+下記参考にとりあえず書いてみる
+参考１：https://qiita.com/dawn_628/items/99cf5b0b8e8b38ba73b2
+（具体的な動作）
+参考２：https://qiita.com/munaita_/items/0739965bcb31bf430e47
+（controllerに書いてあるCSRF防止コード）
+
+②
+エラー「undefined method `concat' for #<Proc:0x00007f9854cb9370>」がDevise::RegistrationsController#newで発生。
+
+③
+下記参考によると、concatはarrayに「配列arrayの末尾に引数の配列other_arrayを結合」とある。
+参考：https://ref.xaio.jp/ruby/classes/array/concat
+
+④
+ストロングパラメータで、丸コピだと以下のようになっているがこれがまずいらしい。
+devise_parameter_sanitizer.permit(:sign_up, keys: [:name]) { |u| u.permit(:email, :password, :password_confirmation, :accepted)}
+
+元はこれの…[:name])までだった。
+
+⑤
+concatがnomethodとなっているけれど、とりあえず{}の中に:nameを足してみたりしたが当然解決しない。
+
+⑥
+なぜかわからないがkeys: [:name]がいかんのかもと思い、devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:email, :password, :password_confirmation, :name, :accepted)}にしたところ、できた！
+
+２：追加したカラム含め日本語になるようja.ymlを追加するなど。
+参考１：https://qiita.com/shizuma/items/a52fd0ef5b60d61fa330
+参考２：https://kossy-web-engineer.hatenablog.com/entry/2018/09/24/115552
+
+３：フッター規約からもジャンプできるように設定
+
+４：プロトタイプの方でGitHubからアラートが来ていた。だからlittle_mokuでbundle updateが必要だったけれどうっかり本番でもbundle update。
+その際i18nでも更新があるとターミナルにメッセージあり、production.rbの中身を書き換えた。
