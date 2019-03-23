@@ -1,0 +1,25 @@
+2019/03/22
+１：アコーディオン挑戦中
+①
+開くけれど閉じないため検証を確認。
+.・「rails-ujs has already been loaded!」エラーが出ていた。
+調べたところ以下あり。
+
+参考：https://qiita.com/hisas/items/8399aec3a5377bf75017
+削除：//= require rails-ujs（application.js）
+
+②
+これによりとりあえずエラーはなくなったがJSがらみだったので念の為moku開始したところ、終了時にエラー。
+「ActionController::InvalidAuthenticityToken」
+ログには「Can't verify CSRF token authenticity.」とのこと。
+
+③
+思い当たるのは3/21の作業で、
+application_controller.rbに「protect_from_forgery with: :exception」を加筆していること。
+エラーはmoku_controllerで出ていたけれどとりあえずコメントアウトして確認、エラーのまま。
+
+④
+話を戻してアコーディオンも確認、やっぱり閉じない。開きっぱなし。最初は閉じてる。開いたあと、閉じない。
+
+⑤というか、昨日11:19mokuを普通にcreateできたので、昨日から今日までの間に何かおかしなことがあるはず。
+
