@@ -1,0 +1,94 @@
+2019/03/26
+１：ログアウトできない件理由がわかった。
+参考１：https://teratail.com/questions/50723
+
+以前、検証画面でエラーを回避するために消した
+「//= require jquery_ujs」のせいだった。
+これがあるおかげで method: deleteが生きるらしく、これを消したためmethodがgetで飛んでしまっていた。
+
+参考２：https://github.com/rails/jquery-ujs/blob/master/README.md
+
+この参考２によれば、「// = require jquery 」「// = require jquery_ujs」のどちらもapplication.jsに必要だとある。
+
+その後見る限り「rails-ujs has already been loaded!」は出ていないのでとりあえずこのまま。
+
+
+２：ユーザー削除後のありがとう画面実装OK
+
+３：もう一度アコーディオン確認。
+試しにドロップダウンもコピペして入れてみたが開かない。
+
+JS系がおかしいのではないか。
+
+４：確認中、acts-as-taggable-onに必要なファイルが足りていなかったので追加
+参考：https://qiita.com/fa19940118/items/62cfbfc8c6c409ba0fa5
+
+５：bootstrapのCDNを確認。バージョンが違っていたのと１行boodstrap.min.jsが足りてなかったので加筆。
+これによりドロップダウンはメニューがでるようになったが、再度クリックしても閉じない。さらにメニューをクリックしたあと、ドロップダウンは閉じるが再度メニューは開かない。
+
+６：アコーディオンは相変わらず。というか、ハンバーガーメニューも閉じなくなっていることに気がついた。
+
+７：これまでのmemoで3/12時点ではアコーディオンができていることを確認。
+そこから怪しそうなコードの修正箇所を追跡。
+3/21にbundle updateしているが、bootstrap自体は4.3.1のまま特に変更は起きていなかった。（Gemfile.lockより）
+
+８：3/15のmemoで、カレンダーをいじっていたら閉じなくなったのでアコーディオンを一旦取り消しとある。
+
+９：アカウントの編集（devise/registration/edit）ではハンバーガーメニューの挙動が正しく行われる。
+個人設定はだめ。FAQでのメニュはおｋ
+
+
+【OK】
+registration/edit
+faq/index
+faq/new
+faq/show
+faq/edit
+mokus/index
+mokus/show
+mokus/check_delete
+mokus/dey_by
+bookmark_index
+work/index
+work/show
+work/edit
+work/check_delete
+work/for_publif
+moku_type/new
+moku_type/show
+moku_type/edit
+moku_type/check_delete
+
+
+
+【NG】
+wor/new  →popover
+mypage/index →MJN
+accounts/edit →popover
+moku_type/index →popover
+
+共通点　＝　NGにはみな<%= javascript_include_tag があり、application.jsを読み込みに行っている。
+
+mjnとpopoverをそれぞれ新たにファイルを作って切り分けたところ、アコーディオンやコラプスが動いた！
+viewやcontrollerの発想よろしく、jsも同じようんやっていたが問題があったようだ。
+
+
+ただし、フラッシュが自動できるコードの部分だけは上手にさばけず、application.jsに今のままのコードで存在してる。
+
+参照した下記のようにしたけれど、自動で消えないため。
+また今度具体的に調整する。いまはこれで。
+参考：https://teratail.com/questions/93157
+
+１０：１でログアウトできない原因が//= require jquery_ujsだったとわかり忘れていたが、devise/registration/edit.html.erbのジャンプ先がいまだにtopになっている。
+
+ログを見るとredirect先が「Started GET "/" for ::1 at 2019-03-26 17:44:21 +0900」になってる。
+
+１１：ステータスコードCompleted 302 Foundになってた。
+「発見した。リクエストしたリソースが一時的に移動されているときに返される。」
+
+１２：原因がわからないのでアコーディオン設置を先にやる。
+
+１３：MJNはjustNowUlのidがダブってしまうことでアコーディオンにした時MJNが表示されない。jQuery知識が足りなくてすぐの対処が難しいのでこれだけアコーディオンを一旦見送る。
+
+１４：一部のカードが下線・横線消滅している場合がある。
+bgを変えたりしているとそうなっているような？

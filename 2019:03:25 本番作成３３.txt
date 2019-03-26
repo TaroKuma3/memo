@@ -1,0 +1,34 @@
+2019/03/25
+１：アコーディオンが解決しないので先にアカウント削除後の画面を作成
+
+２：動作確認のまえにつんのめる。
+
+①
+テストユーザーを作ろうとログアウトをクリックしたら、ルーティングエラーが…？なぜ？
+
+②
+エラーの内容
+「Routing Error」
+「uninitialized constant UsersController」
+
+プロトタイプではusersコントローラを作っていたけれど、最終邸には未使用。viewも１つもない。
+個人設定はaccountsで対応することにしたため。
+
+だから本番でははなからusersコントローラは作っていない。これまでログイン・ログアウトにはこまらなかった。
+
+③
+この数日特にルーティングはいじってない。deviseのログアウト付近もいじってない。何が原因かわからない。
+試しにdeviseのregistration/editで更新を試すと、update後のridirect先が/mypageのはずなのにtop/indexへ。
+accounts/editの場合やmokusなどでmypageへ戻ろうとすると普通にmypageへもどる。
+
+④
+利用規約にdeviseのnew_registrationを借りてnew_registration/terms_of_serviceとアドレスをつくっていたのでこれ？と思ってtop/terms_of_serviceにしたがエラーは回避できない。
+
+⑤
+puma立ち上げなおしてもダメ
+
+⑥
+プロトタイプでログアウトを試す。問題なし。プロトタイプとroutesを見比べるが特に差異はない。
+
+⑦
+どちらもdeviseのバージョンは同じ4.6
