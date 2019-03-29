@@ -1,0 +1,56 @@
+2019/03/28
+１：各所の微調整
+・mokus/showのカードは線が途切れてないので比較する
+
+２：devise/registration/edit（アカウント設定）でなぜかtopへ戻る件。
+ソースをのぞいてみると以下の通り。リクエストメソッドがpostになってるようだ。
+  <form class="edit_user" id="edit_user" role="form" action="/users" accept-charset="UTF-8" method="post">
+  
+  ３：コードを見てみると以下のようにある。
+  html: { method: :put })
+  
+  ４：routes.rbは以下の通り
+  
+cancel_user_registration GET         /users/cancel(.:format) devise/registrations#cancel
+new_user_registration     GET         /users/sign_up(.:format) devise/registrations#new
+edit_user_registration      GET         /users/edit(.:format) devise/registrations#edit
+user_registration              PATCH     /users(.:format) devise/registrations#update
+                                         PUT         /users(.:format) devise/registrations#update
+                                         DELETE  /users(.:format)  devise/registrations#destroy
+                                         POST      /users(.:format) devise/registrations#create
+
+
+５：GitHubでdeviseのregistrations_controllerを確認
+respond_with resource, location: after_update_path_for(resource)でページ遷移しているようだ。
+そもそもcontrollerは見えるようにしてない。
+
+６：プロトタイプからこんな動作だったか？が怪しまれたのでデプロイ済みのプロトタイプをチェック、どうもtopへ行こうとしている。「ログイン済みです」と表示されmypage/indexに入ってきているようだ。
+
+念の為ローカルのプロトタイプを動かしてみたけどやっぱり同じ。
+
+７：deviseでは、registrations.editを更新したあとrootに戻るようになっているそうなのでここをいじらないとダメな仕様だった。
+
+参考：https://easyramble.com/redirect-account-setting-with-devise.html
+
+８：そもそもtopにbefore_actionでforbid_login_userが設定されていなかったからtopがでていたのでこれを設定。
+
+９：７で出てきた参考と、GitHubから、本題のredirect先の変更については２通りのやり方があると判明。
+ルーティングをいじるか、コントローラ作ってオーバーライドか。
+前者の方が圧倒的に楽なので設定したところ上手にできました。
+
+１０：まさかのmokus/edit空っぽ。作成。
+
+１１：mokus.memoにメモを入れたテストをしていなかった。試したところデータ更新されていない。
+memoは以前contentだったがrenameしていた。カラム名はmemoに変更できている。
+スキーマも変わっている。
+mokus_controllerで値を取るのも@do_moku.memo = params[:do_moku][:memo]にできている。
+だがログでは「"do_moku"=>{"moku_type"=>"4", "content"=>"どんたこす"},」となっている。
+
+edit.html.erbを見ると、text_areaが:contentのままだった。:memoに更新し無事解決。
+
+１２：cardでバックグラウンドを変更すると、borderが消える事案、もうカードやめて、単純にborderとbgを設定するだけのものにしたところ解決。
+・mokus/show
+・works/show
+・works/for_public
+
+１３：mypage/indexも同様にborderが消えるが、ここはカードを利用したアコーディオン。手間がかかりそうなのでここは後日。
