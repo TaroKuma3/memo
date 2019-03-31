@@ -1,0 +1,11 @@
+2019/03/31
+１：aboutの続き
+スマホ以上かどうかで表示順を調整
+参考：https://code-schools.com/bootstrap-column-change/
+
+ ２：special thanksの追加
+ アイコンのサービス利用にクレジット表記が必要なのでついでだからこういう感じで。
+ 
+リンク踏んだ時の飛び先は別タブをあけたかった。
+一番最初の教科書でtarget = "_blank"で別タブをひらけるとあったが、link_toで書くには以下を参考にしてブロックを使った書き方でできた。
+参考：https://qiita.com/DAIBANEZ/items/3538194c77c98ca014af
