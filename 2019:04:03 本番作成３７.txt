@@ -1,0 +1,7 @@
+2019/04/03
+１：moku開始後の画面遷移
+・いろいろ調べたが、beforeunload でない手段での制御方法がみあたらない。
+beforeunloadだとy/nの選択肢がでる。まずい。
+どうしたものか。
+
+２：special thanksを作成
