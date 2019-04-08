@@ -1,0 +1,26 @@
+2019/04/08
+
+１：herokuへデプロイ
+参考：https://qiita.com/kazukimatsumoto/items/a0daa7281a3948701c39
+
+２：デプロイ時エラー。
+
+Please check your Rails app for 'config.i18n.fallbacks = true'.
+If you're using I18n (>= 1.1.0) and Rails (< 5.2.2), this should be'config.i18n.fallbacks = [I18n.default_locale]'.
+If not, fallbacks will be broken in your app by I18n 1.1.x.
+
+i18nは1.6.0
+Railsは5.2.2
+
+該当するのだけれど、すでに【config.i18n.fallbacks = [I18n.default_locale]】に修正してある。
+
+そのあとにacts-as-taggable-onについてもメッセージがあり、みてみる限りどうやらエラーと言うよりお知らせのようなものだった。
+
+
+実際のエラーはこちら
+Uglifier::Error: Unexpected token: keyword (const). To use ES6 syntax, harmony mode must be enabled with Uglifier.new(:harmony => true).
+
+これはプロトタイプの時にも出たやつ。
+参考：https://hackbaka.hatenablog.com/entry/2018/02/14/175948
+
+config/production.rbを更新したけれどエラー回避できず
