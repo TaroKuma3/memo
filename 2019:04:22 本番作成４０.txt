@@ -1,0 +1,68 @@
+2019/04/22
+１：以下参照し、git remote add heroku https://git.heroku.com/moku.gitを実行。
+
+参考：https://qiita.com/sayama0402/items/e2c9e65786259dc55e11
+
+２：次にgit push heroku fix-for-heroku-deploy:masterを実行
+しかし
+remote: !       Your account rodysan.mojya@gmail.com does not have access to moku.
+fatal: unable to access 'https://git.heroku.com/moku.git/': The requested URL returned error: 403
+
+とのこと。
+
+
+
+３：「The requested URL returned error: 403」について検索。
+以下を参考にして確認。
+
+参考：https://ja.stackoverflow.com/questions/50141/git-push-heroku-master-%E3%81%A7%E3%82%A8%E3%83%A9%E3%83%BC
+
+１）$cat .git/config実行
+
+[remote "heroku"]
+        url = https://git.heroku.com/moku.git
+        fetch = +refs/heads/*:refs/remotes/heroku/*
+        
+２）$ heroku apps実行
+=== rodysan.mojya@gmail.com Apps
+cryptic-shore-45207
+little-moku-beta
+salty-earth-88608
+
+今あるアプリの名称がでた。
+	一番下の「salty-earth-88608」がmoku。
+	まずはこの名前に揃えなければならないようだ。
+	
+３）$vi .git/config実行
+これはvimモードになるようで最初なんだかわからなかった。
+以下の一番下を参考に、
+a)iで編集モードへ
+b)該当の「url = https://git.heroku.com/moku.git」の部分を「url = https://git.heroku.com/salty-earth-88608.git」へ
+c):escで編集モードからコマンドモードへ
+d)wで保存
+e):qでvimモード終了
+
+参考：https://qiita.com/TaaaZyyy/items/b2b68aec99789374a204
+
+４）もう一度$cat .git/config実行
+[remote "heroku"]
+        url = https://git.heroku.com/salty-earth-88608.git
+        fetch = +refs/heads/*:refs/remotes/heroku/*
+        
+５：$ git push heroku fix-for-heroku-deploy:master実行
+
+６：デプロイできたじゃないの！
+
+７：topとabout(moku？)は見られるけれど、他のページには移動できないためheroku rogs --tailを実行。
+
+「ActiveRecord::StatementInvalid (PG::UndefinedTable: ERROR:  relation "users" does not exist」という一文を発見。
+
+８：検索したところ、以下の参考あり。
+参考の内容通り「WHERE a.attrelid = '"users"'::regclass
+」というエラーメッセージもすぐしたの１行に発生している。
+
+つまり' "user" 'という記述がどこかにあるらしく、これが嫌だと言われているようだ。
+
+参考：https://teratail.com/questions/136758
+
+９：しかしまだプルリクをマージしていないので直しようがないし、多分それ自体が問題なのかも？topとaboutは動くのでプルリク実行する。
