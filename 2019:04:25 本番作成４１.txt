@@ -1,0 +1,71 @@
+2019/04/25
+
+１：エラーを突き止める
+どうもテーブルができていないと言われているようだ
+
+参考：https://teratail.com/questions/23996
+
+heroku run rails db:migrateを実行
+
+２：できました！
+ただ、新しいmokuだから（ブランチをマージしたものだから）かデーターはまっさらな状態。
+また、pgAdminがローカルのものだけ見えるようにしているかとりあえずユーザー登録したけれどpgAdminで見えない状態。
+ちなみにmokuってみたけれど動作に問題はない模様。
+
+３：herokuのDBが見えるようにしたくて調べた
+以下の手順でできそうな雰囲気
+参考：https://medium.com/moonshot/pgadmin4-connetct-to-heroku-db-c0abe2342aa8
+
+４：なんだかうまく行かない。
+host username passwordはheroku参照してそれらしいものを入力している。
+
+すると
+ーーーーーーーーーーーーーーーーーーーーーーー
+Unable to connect to server:
+
+FATAL: permission denied for database "postgres"
+DETAIL: User does not have CONNECT privilege.
+ーーーーーーーーーーーーーーーーーーーーーーー
+ユーザーはCONNECT特権を持っていませんとのこと。
+
+５：こちらを参考にやってみる
+参考：https://qiita.com/master-of-sugar/items/887dc292c7155102c4d9
+
+ただこれもさっきやったのと内容としては同じこと。
+だから結果も同じ。
+
+６：さらにこちらを参照。
+参考：http://md.hatenablog.com/entry/2013/01/14/131358
+
+かなり古い情報だけれど、どうやらDBnameの各場所が間違っているらしいことに気がついて修正。
+すると
+
+ーーーーーーーーーーーーーーーーーーーーーー
+Unable to connect to server:
+
+FATAL: password authentication failed for user "heroku moku"
+FATAL: no pg_hba.conf entry for host "111.239.44.26", user "heroku moku", database "wdytrolmaxcnni", SSL off
+ーーーーーーーーーーーーーーーーーーーーーー
+
+ホスト "111.239.44.26"、ユーザ "heroku moku"、データベース "wdytrolmaxcnni"のpg_hba.confエントリがない、SSLオフ
+とのこと。
+SSLはcreate serverのところにSSLタブがあるのでONにした。
+
+７：さらに調査
+以下の参考によると原因は次のようなものらしい
+参考：http://d.hatena.ne.jp/ka0_0ak/20111214/1323826274
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+●原因
+サーバとの接触に成功はしたもけどサーバが通信を拒否ししてる。
+pg_hba.conf 設定ファイルに認証用の項目がないと発生する。
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+
+また次の参考には似たようなタイトルで同様の案件が複数上がっている模様。
+参考：https://www.manageengine.jp/support/kb/OpManager/?p=7972
+
+
+ポスグレの設定ファイルをいじってくれとあるようだ。
+
+８：こんなのもあった。比較的やってることが読み取りやすいように感じる。
+参考：https://sites.google.com/site/pcchatnetoiles/home/postgresql/django
+
