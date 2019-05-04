@@ -1,0 +1,11 @@
+2019/04/30
+
+１：ちょっと古いけれど以下の方が見やすい気がした
+http://d.hatena.ne.jp/ka0_0ak/20111214/1323826274
+
+２：とりあえず街灯のディレクトリへ移動してみたが該当するものが見当たらない。
+
+/var/lib/pgsql/data/pg_hba.confに用事がある。
+var/libまではあった。
+libでlsしてもpostfixだけしか表示されない
+試しいcd postfixしてみたけれど「-bash: cd: postfix: Permission denied」
