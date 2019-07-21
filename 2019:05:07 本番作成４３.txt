@@ -1,0 +1,106 @@
+2019/05/07
+１：pgAdminがわからないので一旦放置。直せるところを直すことにした。
+
+２：issueを開発から本番へ移行
+
+３：work/newで登録できる画像を１つにしようと決め、まずは挙動を確認しようとしたところ、
+「バリデーションに失敗しました: Memo publicは一覧にありません」とエラー。
+
+４：pgAdmin（ローカル）を見てみると、memo_publicがbooleanじゃなくてintegerにしてしまっていた。
+以前はちゃんと登録できたのにおかしいな？
+
+５：データ型変更しようと過去のメモを参照したところ、本番環境で一度カラムを変えていたことがわかった。じゃあなぜ？
+
+６：PostgreSQLへ移行した時、migrateファイルでエラーがあったので、このカラムの型変更の部分をコメントアウトしていたためだった。
+
+７：あらためてマイグレーションファイルを作って対応
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+class ChangeDatatypeMemoPublicOfWorks < ActiveRecord::Migration[5.2]
+  def change
+    change_column :works, :memo_public, :booleanUSING memo_public::boolean, default: false, null: false
+  end
+end
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+
+８：普段なら問題ないが、rails db:migrateしたらエラーが出た
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+PG::DatatypeMismatch: ERROR:  column "memo_public" cannot be cast automatically to type boolean
+HINT:  You might need to specify "USING memo_public::boolean".
+: ALTER TABLE "works" ALTER COLUMN "memo_public" TYPE boolean, ALTER COLUMN "memo_public" SET DEFAULT 0, ALTER "memo_public" SET NOT NULL
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+ポスグレだから出たエラーのようだ。
+「こうやってかきなよ」的なSQL文?（ALTER文？）が書かれているようにも見える。
+
+９：調べてみるとこのような記事があった。
+
+参考：https://qiita.com/gam0022/items/a73910de5b8eb44e5b13
+
+HINTに書かれている内容を付け加えてみる必要があるようだ。この記事を参考にこのように直してみた。
+
+＜旧＞
+change_column :works, :memo_public, :boolean, default: false, null: false
+
+＜新＞
+change_column :works, :memo_public, :boolean USING memo_public::boolean, default: false, null: false
+
+１０：がやっぱりエラー。
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+SyntaxError: /Users/taro-kuma/Desktop/Git/moku/db/migrate/20190507032646_change_datatype_memo_public_of_works.rb:3: syntax error, unexpected tCONSTANT, expecting keyword_end
+...s, :memo_public, :boolean USING memo_public::boolean, defaul...
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+USINGの部分に波線が引かれてた。
+
+１１：さっきの参考qiitaにあったスタックオーバーフローをチェック。
+：を除き、シングルクオートで囲ってある必要があるようなのでそのように訂正。
+
+１２：まだエラー
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+PG::DatatypeMismatch: ERROR:  column "memo_public" is of type boolean but default expression is of type integer
+HINT:  You will need to rewrite or cast the expression.
+
+（"memo_public"はブール型ですが、デフォルトの式は整数型です
+ヒント：式を書き直すかキャストする必要があります。）
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+
+とのこと。
+
+１３：キャストとはなんなのか
+参考：https://wa3.i-3-i.info/word1190.html
+
+これによると、型変換のことをキャストというらしい。
+
+１４：pgAdminでSQLかいてしまうのはどうか
+
+参考：https://hacknote.jp/archives/4125/
+最初のエラー文の時にすでSQL文が書いてあったしこれを試せばいいのではないか？
+だが、すでにマイグレーションファイルを作ってしまっている。以前ちょっとエラーがでてこまったので巻き戻しは怖かったけれど、gitで巻き戻しを実行。
+とりあえず綺麗にマイグレーションファイルは消えた。
+
+１５：pgAdminでSQL書いてみた
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+ALTER TABLE "works" ALTER COLUMN "memo_public" TYPE boolean, ALTER COLUMN "memo_public" SET DEFAULT 0, ALTER "memo_public" SET NOT NULL
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+
+で⚡️実行。しかし。
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+ERROR:  column "memo_public" cannot be cast automatically to type boolean
+HINT:  You might need to specify "USING memo_public::boolean".
+SQL state: 42804
+（"memo_public"は自動的に型booleanにキャストできません
+ヒント：スペックが必要かもしれません）
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+
+１６：調べる
+参考：https://hacknote.jp/archives/4125/
+これをみる限りSQL文は適切なようだ。
+
+参考：http://dqn.sakusakutto.jp/2012/02/cannot_be_cast_to_type_integer.html
+これをみておもいだしたけれど、「HINT:  You might need to specify "USING memo_public::boolean".」とあった。SQLには加えてなかったので以下のようにして⚡️。
+
+TYPEの部分に追加が必要なようだ。
+
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+ALTER TABLE "works" ALTER COLUMN "memo_public" TYPE boolean USING memo_public::boolean, ALTER COLUMN "memo_public" SET DEFAULT 0, ALTER "memo_public" SET NOT NULL
+ーーーーーーーーーーーーーーーーーーーーーーーーー
+
+１７：エラーは変わらず。
